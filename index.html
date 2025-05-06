@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Elite Top Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2.5em;
+            color: #00ff9d;
+            text-shadow: 0 0 10px #00ff9d;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 2px solid #00ff9d;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+        }
+
+        button {
+            background: #00ff9d;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            box-shadow: 0 0 15px #00ff9d;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .payment-method {
+            border: 2px solid #00ff9d;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">GHOST ELITE TOP UP</div>
+    
+    <div class="container">
+        <form id="topupForm">
+            <div class="form-group">
+                <label>Player ID:</label>
+                <input type="text" id="playerId" required>
+            </div>
+
+            <div class="form-group">
+                <label>Nickname:</label>
+                <input type="text" id="nickname" required>
+            </div>
+
+            <div class="form-group">
+                <label>Jumlah Diamond:</label>
+                <select id="diamondAmount" required>
+                    <option value="5">5 Diamonds - Rp 1.000</option>
+                    <option value="12">12 Diamonds - Rp 2.400</option>
+                    <option value="50">50 Diamonds - Rp 9.900</option>
+                    <option value="100">100 Diamonds - Rp 19.800</option>
+                    <option value="500">500 Diamonds - Rp 99.000</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Metode Pembayaran:</label>
+                <div class="payment-methods">
+                    <div class="payment-method">OVO</div>
+                    <div class="payment-method">Gopay</div>
+                    <div class="payment-method">Dana</div>
+                    <div class="payment-method">Shopee</div>
+                    <div class="payment-method">QRIS</div>
+                    <div class="payment-method">Bank Transfer</div>
+                </div>
+            </div>
+
+            <button type="button" onclick="processOrder()">Konfirmasi Pesanan</button>
+        </form>
+    </div>
+
+    <script>
+        function processOrder() {
+            const playerId = document.getElementById('playerId').value;
+            const nickname = document.getElementById('nickname').value;
+            const diamondAmount = document.getElementById('diamondAmount').value;
+            
+            if (!playerId || !nickname || !diamondAmount) {
+                alert('Harap isi semua data!');
+                return;
+            }
+
+            const message = `🎮 *New Top Up Order* 🎮
+Player ID: ${playerId}
+Nickname: ${nickname}
+Diamond: ${diamondAmount}
+Status: Menunggu Pembayaran`;
+
+            sendToTelegram(message);
+        }
+
+        function sendToTelegram(message) {
+            const botToken = 'YOUR_BOT_TOKEN';
+            const chatId = 'YOUR_CHAT_ID';
+            
+            const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            
+            fetch(`https://cors-anywhere.herokuapp.com/${telegramUrl}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Pesanan berhasil dikirim! Silakan lanjutkan pembayaran.');
+                } else {
+                    alert('Terjadi kesalahan saat mengirim pesanan.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan!');
+            });
+        }
+    </script>
+</body>
+</html>
